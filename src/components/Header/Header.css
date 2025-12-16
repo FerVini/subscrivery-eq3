@@ -1,0 +1,13 @@
+header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 15px 0;
+    background-color: rgb(232, 250, 244);
+    box-shadow: 5px 0 10px rgba(78, 110, 109, 0.2);
+}
+
+header strong {
+    font-size: 24px;
+    color: #1f1f1f;
+}
