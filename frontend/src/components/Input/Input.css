@@ -4,10 +4,13 @@
   margin-bottom: 12px;
 }
 
-.input-group input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.login-container input {
+  width: 100%;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  border: none;
+  background-color: #e5e5e5;
+  margin-bottom: var(--spacing-lg);
 }
 
 .input-group input:focus {

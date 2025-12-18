@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { PrivateRoute } from "./PrivateRoute";
 
+import Welcome from "../pages/Welcome/Welcome"
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import Plans from "../pages/Plans/Plans";
@@ -13,8 +14,10 @@ export function AppRoutes() {
         <BrowserRouter>
             <Routes>
 
-                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/" element={<Navigate to="/Welcome" />} />
 
+
+                <Route path="/Welcome" element={<Welcome />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 

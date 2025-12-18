@@ -1,77 +1,201 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import "./Register.css";
 import Input from "../../components/Input/Input";
-import Button from "../../components/Button/Button";
-
-import "./Register.css"
+import Button from "../../components/Button/Button"
 
 export default function Register() {
-    const [nome, setNome] = useState("");
-    const [email, setEmail] = useState("");
-    const [senha, setSenha] = useState("");
-    const [confirmacao, setConfirmacao] = useState("");
-    const [erro, setErro] = useState("");
+  const navigate = useNavigate();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    const navigate = useNavigate();
 
-    function handleSubmit(e) {
-        e.preventDefault();
+  const [step, setStep] = useState(1);
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [error, setError] = useState("");
 
-        if (!nome || !email || !senha || !confirmacao) {
-            setErro("Preencha todos os campos");
-            return;
-        }
+  function handleNext() {
+    setError("");
 
-        if (senha !== confirmacao) {
-            setErro("As senhas não conferem");
-            return;
-        }
+    if (step === 1) {
+      if (!email) {
+        setError("Informe seu e-mail");
+        return;
+      }
 
-        navigate("/login");
+      if (!emailRegex.test(email)) {
+        setError("Informe um e-mail válido");
+        return;
+      }
     }
 
-    return (
-        <div className="register-container">
+    if (step === 2 && !phone) {
+      setError("Informe seu celular");
+      return;
+    }
 
-            <form onSubmit={handleSubmit}>
-                <h1>Cadastro</h1>
+    if (step === 3 && password.length < 8) {
+      setError("A senha deve ter no mínimo 8 caracteres");
+      return;
+    }
 
-                {erro && <p className="error">{erro}</p>}
+    setStep(step + 1);
+  }
 
-                <Input
-                    label="Nome"
-                    type="text"
-                    value={nome}
-                    onChange={(e) => setNome(e.target.value)}
-                />
+  function handleRegister() {
+    if (!name || !lastName) {
+      setError("Preencha seu nome completo");
+      return;
+    }
 
-                <Input
-                    label="E-mail"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+    if (!acceptTerms) {
+      setError("Você precisa aceitar os termos");
+      return;
+    }
 
-                <Input
-                    label="Senha"
-                    type="password"
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                />
+    console.log({
+      email,
+      phone,
+      password,
+      name,
+      lastName,
+    });
 
-                <Input
-                    label="Confirmar senha"
-                    type="password"
-                    value={confirmacao}
-                    onChange={(e) => setConfirmacao(e.target.value)}
-                />
+    navigate("/plans");
+  }
 
-                <Button type="submit">cadastrar</Button>
+  function handleBack() {
+    if (step === 1) {
+      navigate("/");
+    } else {
+      setStep(step - 1);
+      setError("");
+    }
+  }
 
-                <p>
-                    Já tem conta? <Link to="/Login">Login</Link>
-                </p>
-            </form>
-        </div>
-    )
+  return (
+    <div className="register-container">
+      <header className="register-header">
+        <button className="back-btn" onClick={handleBack}>
+          ←
+        </button>
+        <span>Cadastro</span>
+      </header>
+
+      {step === 1 && (
+        <>
+          <h1>Qual é seu e-mail?</h1>
+
+          <Input
+            type="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError("");
+            }}
+          />
+
+          {error && <span className="error">{error}</span>}
+
+          <Button className="primary-btn" onClick={handleNext}>
+            Continuar
+          </Button>
+        </>
+      )}
+
+      {step === 2 && (
+        <>
+          <h1>Qual é seu celular?</h1>
+
+          <Input
+            type="tel"
+            placeholder="Celular"
+            value={phone}
+            onChange={(e) => {
+              const onlyNumbers = e.target.value.replace(/\D/g, "");
+              setPhone(onlyNumbers);
+              setError("");
+            }}
+          />
+
+          {error && <span className="error">{error}</span>}
+
+          <Button className="primary-btn" onClick={handleNext}>
+            Continuar
+          </Button>
+        </>
+      )}
+
+      {step === 3 && (
+        <>
+          <h1>Agora, escolha uma senha</h1>
+          <p className="subtitle">Mínimo de 8 caracteres</p>
+
+          <Input
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError("");
+            }}
+          />
+
+          {error && <span className="error">{error}</span>}
+
+          <Button className="primary-btn" onClick={handleNext}>
+            Continuar
+          </Button>
+        </>
+      )}
+
+      {step === 4 && (
+        <>
+          <h1>Detalhes da conta</h1>
+
+          <Input
+            type="text"
+            placeholder="Nome"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setError("");
+            }}
+          />
+
+          <Input
+            type="text"
+            placeholder="Sobrenome"
+            value={lastName}
+            onChange={(e) => {
+              setLastName(e.target.value);
+              setError("");
+            }}
+          />
+
+          <Input type="email" value={email} disabled />
+
+          <label className="terms">
+            <Input
+              type="checkbox"
+              checked={acceptTerms}
+              onChange={(e) => setAcceptTerms(e.target.checked)}
+            />
+            Concordo com os Termos & Condições e a Política de Privacidade
+          </label>
+
+          {error && <span className="error">{error}</span>}
+
+          <Button className="primary-btn" onClick={handleRegister}>
+            Criar minha conta
+          </Button>
+        </>
+      )}
+    </div>
+  );
 }

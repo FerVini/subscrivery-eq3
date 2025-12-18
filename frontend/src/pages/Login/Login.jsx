@@ -1,58 +1,109 @@
-import { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate, Link } from "react-router-dom";
-import Input from '../../components/Input/Input';
-import Button from '../../components/Button/Button';
-
-import "./Login.css"
+import { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import Input from "../../components/Input/Input"
+import "./Login.css";
 
 export default function Login() {
+    const [step, setStep] = useState(1);
     const [email, setEmail] = useState("");
-    const [senha, setSenha] = useState("");
-    const [erro, setErro] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    function handleSubmit(e) {
+    function handleNext(e) {
         e.preventDefault();
 
-        if (!email || !senha) {
-            setErro("Preencha todos os campos");
+        if (!email) {
+            setError("Informe seu e-mail");
             return;
         }
 
-        login();
-        navigate('/plans');
+        setError("");
+        setStep(2);
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+
+        if (!password) {
+            setError("Informe sua senha");
+            return;
+        }
+
+        setError("");
+        login(email);
+        navigate("/plans");
+    }
+
+    function handleBack() {
+        if (step === 1) {
+            navigate("/");
+        } else {
+            setStep(1);
+            setError("");
+        }
     }
 
     return (
-        <div className='login-container'>
-            <form onSubmit={handleSubmit}>
-                <h1>Login</h1>
+        <div className="login-container">
+            <header className="login-header">
+                <button className="back-btn" onClick={handleBack}>
+                    ←
+                </button>
+                <span>Login</span>
+                <button className="help-btn">?</button>
+            </header>
 
-                {erro && <p className='error'>{erro}</p>}
+            {step === 1 && (
+                <>
+                    <h1>Qual é seu e-mail?</h1>
 
-                <Input
-                    label="E-mail"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+                    <Input
+                        type="email"
+                        placeholder="E-mail"
+                        value={email}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            setError("");
+                        }}
+                    />
 
-                <Input
-                    label="Senha"
-                    type="password"
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                />
+                    {error && <span className="error">{error}</span>}
 
-                <Button type="submit">Entrar</Button>
+                    <button className="primary-btn" onClick={handleNext}>
+                        Continuar
+                    </button>
+                </>
+            )}
 
-                <p>
-                    Não tem conta? <Link to="/register">Cadastre-se</Link>
-                </p>
-            </form>
+            {step === 2 && (
+                <>
+                    <h1>Sua senha</h1>
+
+                    <input
+                        type="password"
+                        placeholder="Senha"
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                            setError("");
+                        }}
+                    />
+
+                    {error && <span className="error">{error}</span>}
+
+                    <a href="#" className="forgot-password">
+                        Esqueci minha senha
+                    </a>
+
+                    <button className="primary-btn" onClick={handleLogin}>
+                        Continuar
+                    </button>
+                </>
+            )}
         </div>
     );
 }
