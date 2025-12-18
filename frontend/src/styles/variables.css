@@ -33,6 +33,11 @@
     --spacing-xl: 2rem;
     --spacing-2xl: 3rem;   
 
+    /* BORDER RADIUS */
+
+    --radius-sm: 10px;
+    --radius-md: 15px;
+    --radius-lg: 18px;
 }
 
 @font-face {
